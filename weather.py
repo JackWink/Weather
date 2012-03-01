@@ -93,9 +93,17 @@ def parse_forecast(data):
 
 def parse_weather_data(data, args):
     data = json.loads(data)
+    
     if 'error' in data['response']:
         print data['response']['error']['description']
         return
+    
+    if 'results' in data['response']:
+        print "More than 1 city matched your query."
+        for result in data['response']['results']:
+            print result['name'] + ", " + result['state'] + " " + result['country_name']
+        return
+
     if args.alerts:
         parse_alerts(data)
     if args.now:
