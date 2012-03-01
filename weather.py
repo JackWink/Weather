@@ -99,7 +99,7 @@ def parse_weather_data(data, args):
         return
     
     if 'results' in data['response']:
-        print "More than 1 city matched your query."
+        print "More than 1 city matched your query, try being more specific"
         for result in data['response']['results']:
             print result['name'] + ", " + result['state'] + " " + result['country_name']
         return
