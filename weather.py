@@ -67,8 +67,8 @@ def make_str(args, options):
 #
 #  Takes the returned data and parses the alert messages
 def parse_alerts(data):
-    for alert in range(len(data['alerts'])):
-        print "\033[91m" + data['alerts'][alert] + "\033[0m"
+    for alert in data['alerts']:
+        print "\033[91m" + alert['message'].rstrip("\n") + "\nExpires: " alert['expires'] + "\033[0m"
 
 
 ## parse_conditions
