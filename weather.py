@@ -1,33 +1,38 @@
 #!/usr/bin/env python
-import requests, argparse, sys, json 
+import requests
+import argparse
+import sys
+import json
 
 settings = {
-    "api_key": "your-api-key",   
-    "metric": False 
+    "api_key": "your-api-key",
+    "metric": False
 }
 
-## get_max_width
-#
-#  Returns the max width of any row in an array
-def get_max_width(table, i):
+def get_max_col_width(table, i):
+    """
+    Returns the length of the longest string in any column
+    """
     return max([len(row[i]) for row in table])
 
-## print_table
-#
-#  Aligns and prints an array into a table, given that the first 
-#  row in the array contains the column names
 def print_table(out, table):
+    """
+    Aligns and prints an array into a formatted table
+
+    Requires that the first row in the array contain the column names
+    and that each row contains the same number of elements
+    """
     col_paddings = []
     for i in range(len(table[0])):
-        col_paddings.append(get_max_width(table, i))
-   
+        col_paddings.append(get_max_col_width(table, i))
+
     print >> out, table[0][0].ljust(col_paddings[0] + 1),
     for i in range(1, len(table[0])):
         col = table[0][i].rjust(col_paddings[i] + 2)
         print >> out, col,
-    
 
-    print >> out, "" 
+
+    print >> out, ""
     print >> out, "-" * (sum(col_paddings) + 3 * len(col_paddings))
 
     table.pop(0)
@@ -35,111 +40,88 @@ def print_table(out, table):
         print >> out, row[0].ljust(col_paddings[0] + 1),
         for i in range(1, len(row)):
             col = row[i].rjust(col_paddings[i] + 2)
-            print >> out, col,
-        
-        print >> out
+            print >> out, col.encode('utf-8'),
+
+        print >> out.encode('utf-8')
 
 
-## Make_str
-#
-#  Takes the options and arguments and assembles the query string
-def make_str(args, options):
-    url = ""
-
-    # In the case no options are set, use the default
-    if not (args.now or args.hourly or args.alerts or args.forecast):
-        args.now = True
-        args.alerts = True
-
-    if (args.now):
-        url += options['now']
-    if (args.hourly):
-        url += options['hourly']
-    if (args.forecast):
-        url += options['forecast']
-    if (args.alerts):
-        url += options['alerts']
-    
-    return url
-
-
-## parse_alerts
-#
-#  Takes the returned data and parses the alert messages
-def parse_alerts(data):
+def print_alerts(data):
+    """
+    Prints any weather alerts in red
+    """
     for alert in data['alerts']:
-        print "\033[91m" + alert['message'].rstrip("\n") + "\nExpires: " alert['expires'] + "\033[0m"
+        print "\033[91m" + alert['message'].rstrip("\n") + "\nExpires: " + alert['expires'] + "\033[0m"
 
 
-## parse_conditions
-#
-#  Parses the current conditions from the API
-def parse_conditions(data):
+def print_conditions(data):
+    """
+    Prints the current weather conditions
+    """
     print "Weather for " + data['display_location']['full']
-    print "Currently: "  + data['temperature_string'] + " " + data['weather'] 
-    print "Wind: "       + data['wind_string']  
+    print "Currently: "  + data['temperature_string'] + " " + data['weather']
+    print "Wind: "       + data['wind_string']
     print "Humidity: "   + data['relative_humidity']
 
 
-## parse_hourly
-#
-#  Parses the hourly condition data from the API
-def parse_hourly(data, metric):
+def print_hourly(data, metric):
+    """
+    Prints the hourly weather data in a table
+    """
     # Need to generate an array to send the print_table, first row must be the keys
     val = []
     val.append(["Date", "Hour", "Temperature", "Weather"])
-    
+
     for item in data:
         # Format the date and temp strings before appending to the array
         time = item["FCTTIME"]
         date = time["mon_abbrev"] + " " + time["mday_padded"] + ", " + time["year"]
-        
+
         if settings['metric'] or metric:
             temp = item["temp"]["metric"] + u" \u00B0C"
         else:
             temp = item["temp"]["english"] + u" \u00B0F"
         val.append([date, time['civil'], temp, item['condition']])
-    
+
     print "\n36 Hour Hourly Forecast:"
     print_table(sys.stdout, val)
 
 
-## parse_forecast
-#
-#  Parses the forecast data from the API
-def parse_forecast(data, metric):
+def print_forecast(data, metric):
+    """
+    Prints the weekly forcast data in a table
+    """
     # Need to generate an array to send the print_table, first row must be the keys
     val = []
     val.append(["Date", "Condition", "Temp (Hi/Lo)", "Wind", "Humidity"])
-    
+
     for item in data:
         date = item['date']
         date_str = date['monthname'] + " " + str(date['day']) + ", " + str(date['year'])
-        
+
         if settings['metric'] or metric:
             temp = item['high']['celsius'] + u" \u00B0C / " + item['low']['celsius'] + u" \u00B0C"
-            wind = "~" + str(item['avewind']['kph']) + "kph " + item['avewind']['dir'] 
+            wind = "~" + str(item['avewind']['kph']) + "kph " + item['avewind']['dir']
         else:
             temp = item['high']['fahrenheit'] + u" \u00B0F / " + item['low']['fahrenheit'] + u" \u00B0F"
-            wind = "~" + str(item['avewind']['mph']) + "mph " + item['avewind']['dir'] 
+            wind = "~" + str(item['avewind']['mph']) + "mph " + item['avewind']['dir']
 
         hum = str(item["avehumidity"]) + "%"
         val.append([date_str, item['conditions'], temp, wind, hum])
-    
+
     print "\nWeather Forecast:"
     print_table(sys.stdout, val)
 
 
-## parse_weather_data
-#
-#  Parses the returned API data along with the options for proper formatting
-def parse_weather_data(data, args):
+def print_weather_data(data, args):
+    """
+    Prints the supplied weather data as specified by the options and arguments.
+    """
     data = json.loads(data)
-    
+
     if 'error' in data['response']:
         print data['response']['error']['description']
         return
-    
+
     if 'results' in data['response']:
         print "More than 1 city matched your query, try being more specific"
         for result in data['response']['results']:
@@ -147,38 +129,67 @@ def parse_weather_data(data, args):
         return
 
     if args.alerts:
-        parse_alerts(data)
+        print_alerts(data)
     if args.now:
-        parse_conditions(data['current_observation'])
+        print_conditions(data['current_observation'])
     if args.hourly:
-        parse_hourly(data['hourly_forecast'], args.metric)
+        print_hourly(data['hourly_forecast'], args.metric)
     if args.forecast:
-        parse_forecast(data['forecast']['simpleforecast']['forecastday'], args.metric)
+        print_forecast(data['forecast']['simpleforecast']['forecastday'], args.metric)
 
 
-def main(args):
-    # API methods 
-    values = {
+
+def make_query_path(args):
+    """
+    Returns a path to use against the weather underground API
+    by parsing program arguments.
+    """
+    query = ""
+
+    paths = {
         "now": "conditions/",
         "forecast": "forecast/",
         "hourly": "hourly/",
         "alerts": "alerts/",
-        "ip": "autoip"
     }
-    
-    # Create a location string, or use geoip
+
+    # In the case no options are set, use the default
+    if not (args.now or args.hourly or args.alerts or args.forecast):
+        args.now = True
+        args.alerts = True
+
+    if (args.now):
+        query += paths['now']
+    if (args.hourly):
+        query += paths['hourly']
+    if (args.forecast):
+        query += paths['forecast']
+    if (args.alerts):
+        query += paths['alerts']
+
+    return query
+
+def make_api_url(args):
+    """
+    Returns a url to the weather underground API endpoint by parsing
+    program arguments.
+    """
+    base_url="http://api.wunderground.com/api/%s/" % settings['api_key']
+
+    # Create a location string, or use autoip
     query="q/%s.json"
     if args.location:
         query = query % "_".join(args.location);
     else:
-        query = query % values['ip']
-    
-    base_url="http://api.wunderground.com/api/%s/" % settings['api_key']
-    url = base_url + make_str(args, values) + query
-    
-    # Make the API request, parse the data
-    r = requests.get(url)
-    parse_weather_data(r.content, args)
+        query = query % "autoip"
+
+    return base_url + make_query_path(args) + query
+
+
+def main(args):
+    api_url = make_api_url(args)
+    r = requests.get(api_url)
+    print_weather_data(r.content, args)
 
 
 if __name__ == "__main__":
@@ -188,10 +199,11 @@ if __name__ == "__main__":
     parser.add_argument('-f', '--forecast', help='Get the current forecast', action='store_true')
     parser.add_argument('-o', '--hourly', help='Get the hourly forecast', action='store_true')
     parser.add_argument('-a', '--alerts', help='View any current weather alerts (Default)', action='store_true')
+
     if settings['metric']:
         parser.add_argument('-m', '--metric', help='Use metric units instead of English units (Default)', action='store_true')
     else:
         parser.add_argument('-m', '--metric', help='Use metric units instead of English units', action='store_true')
-    
+
     main(parser.parse_args())
 
