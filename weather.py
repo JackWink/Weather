@@ -22,27 +22,27 @@ def print_table(out, table):
     Requires that the first row in the array contain the column names
     and that each row contains the same number of elements
     """
-    col_paddings = []
+    max_col_widths = []
     for i in range(len(table[0])):
-        col_paddings.append(get_max_col_width(table, i))
+        max_col_widths.append(get_max_col_width(table, i))
 
-    print >> out, table[0][0].ljust(col_paddings[0] + 1),
+    print >> out, table[0][0].ljust(max_col_widths[0] + 1),
     for i in range(1, len(table[0])):
-        col = table[0][i].rjust(col_paddings[i] + 2)
+        col = table[0][i].rjust(max_col_widths[i] + 2)
         print >> out, col,
 
 
     print >> out, ""
-    print >> out, "-" * (sum(col_paddings) + 3 * len(col_paddings))
+    print >> out, "-" * (sum(get_max_col_widths) + 3 * len(max_col_widths))
 
     table.pop(0)
     for row in table:
-        print >> out, row[0].ljust(col_paddings[0] + 1),
+        print >> out, row[0].ljust(max_col_widths[0] + 1),
         for i in range(1, len(row)):
-            col = row[i].rjust(col_paddings[i] + 2)
-            print >> out, col.encode('utf-8'),
+            col = row[i].rjust(max_col_widths[i] + 2)
+            print >> out, col,
 
-        print >> out.encode('utf-8')
+        print >> out
 
 
 def print_alerts(data):
