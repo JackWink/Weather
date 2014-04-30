@@ -9,11 +9,11 @@ settings = {
     "metric": False
 }
 
-def get_max_col_width(table, i):
+def get_max_col_width(table, column_index):
     """
     Returns the length of the longest string in any column
     """
-    return max([len(row[i]) for row in table])
+    return max([len(row[column_index]) for row in table])
 
 def print_table(out, table):
     """
@@ -23,8 +23,8 @@ def print_table(out, table):
     and that each row contains the same number of elements
     """
     max_col_widths = []
-    for i in range(len(table[0])):
-        max_col_widths.append(get_max_col_width(table, i))
+    for col in range(len(table[0])):
+        max_col_widths.append(get_max_col_width(table, col))
 
     print >> out, table[0][0].ljust(max_col_widths[0] + 1),
     for i in range(1, len(table[0])):
