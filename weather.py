@@ -3,6 +3,7 @@ import requests
 import argparse
 import sys
 import json
+import codecs
 
 settings = {
     "api_key": "your-api-key",
@@ -29,7 +30,7 @@ def print_table(out, table):
     print >> out, table[0][0].ljust(max_col_widths[0] + 1),
     for i in range(1, len(table[0])):
         col = table[0][i].rjust(max_col_widths[i] + 2)
-        print >> out, col,
+        out.write(col)
 
 
     print >> out, ""
@@ -40,7 +41,7 @@ def print_table(out, table):
         print >> out, row[0].ljust(max_col_widths[0] + 1),
         for i in range(1, len(row)):
             col = row[i].rjust(max_col_widths[i] + 2)
-            print >> out, col,
+            out.write(col)
 
         print >> out
 
@@ -189,6 +190,10 @@ def make_api_url(args):
 def main(args):
     api_url = make_api_url(args)
     r = requests.get(api_url)
+
+    # Wrap sys.stdout in a utf8 stream writer in case output is piped
+    sys.stdout = codecs.getwriter('utf8')(sys.stdout)
+
     print_weather_data(r.content, args)
 
 
