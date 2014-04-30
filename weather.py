@@ -69,7 +69,7 @@ def print_hourly(data, metric):
     """
     # Need to generate an array to send the print_table, first row must be the keys
     val = []
-    val.append(["Date", "Hour", "Temperature", "Weather"])
+    val.append(["Date", "Hour", "Temperature", "Chance of Rain", "Weather"])
 
     for item in data:
         # Format the date and temp strings before appending to the array
@@ -80,7 +80,7 @@ def print_hourly(data, metric):
             temp = item["temp"]["metric"] + u" \u00B0C"
         else:
             temp = item["temp"]["english"] + u" \u00B0F"
-        val.append([date, time['civil'], temp, item['condition']])
+        val.append([date, time['civil'], temp,  item["pop"] + "%", item['condition']])
 
     print "\n36 Hour Hourly Forecast:"
     print_table(sys.stdout, val)
@@ -88,11 +88,11 @@ def print_hourly(data, metric):
 
 def print_forecast(data, metric):
     """
-    Prints the weekly forcast data in a table
+    Prints the 3 day forcast data in a table
     """
     # Need to generate an array to send the print_table, first row must be the keys
     val = []
-    val.append(["Date", "Condition", "Temp (Hi/Lo)", "Wind", "Humidity"])
+    val.append(["Date", "Condition", "Chance of Rain", "Temp (Hi/Lo)", "Wind", "Humidity"])
 
     for item in data:
         date = item['date']
@@ -106,7 +106,7 @@ def print_forecast(data, metric):
             wind = "~" + str(item['avewind']['mph']) + "mph " + item['avewind']['dir']
 
         hum = str(item["avehumidity"]) + "%"
-        val.append([date_str, item['conditions'], temp, wind, hum])
+        val.append([date_str, item['conditions'], str(item["pop"]) + "%", temp, wind, hum])
 
     print "\nWeather Forecast:"
     print_table(sys.stdout, val)
