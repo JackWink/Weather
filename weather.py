@@ -33,7 +33,7 @@ def print_table(out, table):
 
 
     print >> out, ""
-    print >> out, "-" * (sum(get_max_col_widths) + 3 * len(max_col_widths))
+    print >> out, "-" * (sum(max_col_widths) + 3 * len(max_col_widths))
 
     table.pop(0)
     for row in table:
