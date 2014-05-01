@@ -4,11 +4,42 @@ import argparse
 import sys
 import json
 import codecs
+import os
 
-settings = {
-    "api_key": "your-api-key",
-    "metric": False
-}
+WEATHER_CONF_FILE = "~/.weatherrc"
+
+class Settings(object):
+    """
+    Contains the settings held in the WEATHER_CONF_FILE.
+    """
+    # Cache of the class level settings
+    settings  = None
+    file_path = None
+
+    def __init__(self):
+        if not Settings.settings:
+            Settings.file_path = os.path.expanduser(WEATHER_CONF_FILE)
+            if not os.path.exists(Settings.file_path):
+                self.generate_default_weatherrc()
+
+            with open(Settings.file_path) as weatherrc:
+                Settings.settings = json.load(weatherrc)
+
+    def generate_default_weatherrc(self):
+        """
+        Writes a default weather conf file
+        """
+        with open(Settings.file_path, "w") as weatherrc:
+            weatherrc.write("\n".join(["{", '"api_key": "your-api-key",',
+                                            '"metric": false', "}"]))
+
+    def __getattr__(self, attr):
+        """
+        Proxy attribute requests to the settings cache
+        """
+        return Settings.settings[attr]
+
+
 
 def get_max_col_width(table, column_index):
     """
@@ -68,6 +99,7 @@ def print_hourly(data, metric):
     """
     Prints the hourly weather data in a table
     """
+    settings = Settings()
     # Need to generate an array to send the print_table, first row must be the keys
     val = []
     val.append(["Date", "Hour", "Temperature", "Chance of Rain", "Weather"])
@@ -77,7 +109,7 @@ def print_hourly(data, metric):
         time = item["FCTTIME"]
         date = time["mon_abbrev"] + " " + time["mday_padded"] + ", " + time["year"]
 
-        if settings['metric'] or metric:
+        if settings.metric or metric:
             temp = item["temp"]["metric"] + u" \u00B0C"
         else:
             temp = item["temp"]["english"] + u" \u00B0F"
@@ -91,6 +123,7 @@ def print_forecast(data, metric):
     """
     Prints the 3 day forcast data in a table
     """
+    settings = Settings()
     # Need to generate an array to send the print_table, first row must be the keys
     val = []
     val.append(["Date", "Condition", "Chance of Rain", "Temp (Hi/Lo)", "Wind", "Humidity"])
@@ -99,7 +132,7 @@ def print_forecast(data, metric):
         date = item['date']
         date_str = date['monthname'] + " " + str(date['day']) + ", " + str(date['year'])
 
-        if settings['metric'] or metric:
+        if settings.metric or metric:
             temp = item['high']['celsius'] + u" \u00B0C / " + item['low']['celsius'] + u" \u00B0C"
             wind = "~" + str(item['avewind']['kph']) + "kph " + item['avewind']['dir']
         else:
@@ -175,7 +208,8 @@ def make_api_url(args):
     Returns a url to the weather underground API endpoint by parsing
     program arguments.
     """
-    base_url="http://api.wunderground.com/api/%s/" % settings['api_key']
+    settings = Settings()
+    base_url="http://api.wunderground.com/api/%s/" % settings.api_key
 
     # Create a location string, or use autoip
     query="q/%s.json"
@@ -185,6 +219,8 @@ def make_api_url(args):
         query = query % "autoip"
 
     return base_url + make_query_path(args) + query
+
+
 
 
 def main(args):
@@ -204,11 +240,7 @@ if __name__ == "__main__":
     parser.add_argument('-f', '--forecast', help='Get the current forecast', action='store_true')
     parser.add_argument('-o', '--hourly', help='Get the hourly forecast', action='store_true')
     parser.add_argument('-a', '--alerts', help='View any current weather alerts (Default)', action='store_true')
-
-    if settings['metric']:
-        parser.add_argument('-m', '--metric', help='Use metric units instead of English units (Default)', action='store_true')
-    else:
-        parser.add_argument('-m', '--metric', help='Use metric units instead of English units', action='store_true')
+    parser.add_argument('-m', '--metric', help='Use metric units instead of English units', action='store_true')
 
     main(parser.parse_args())
 
