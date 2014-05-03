@@ -1,6 +1,6 @@
 #Weather
 
-Weather is a small command line python script to grab the current weather and/or weather forcast and display it.
+Weather is a small command line python script to grab the current weather and/or weather forcast from weather underground and display it nicely in the terminal.
 
 ##Usage Options
 
@@ -16,10 +16,15 @@ Weather is a small command line python script to grab the current weather and/or
 - Requests
 - Weather Underground API key 
 
-##Installation
+##Requirements
+If you don't have requests installed, install it! `pip install -r requirements.txt` or `pip install requests` 
 
-If you don't have requests installed, install it! `pip install requests`
+You need to sign up for an API key from weather underground `http://www.wunderground.com/weather/api/`.  You'll want the Cumulus feature plan, as long as you select the developer usage plan, it's free.  
 
-You need to sign up for an API key from weather underground `http://www.wunderground.com/weather/api/`.  You'll want the Cumulus feature plan, as long as you select the developer usage plan, it's free.  Edit weather.py to include your API key in the settings dictionary.  If you prefer metric units by default, set `metric` to true in the settings dictionary.
+##Configuring
 
-Move `weather.py` to `/usr/local/bin/` or `/usr/bin/` and rename it weather.  Make sure you set `chmod +x weather` for it to execute.
+Run weather.py to generate a `.weatherrc` file, which by default installs into your home directory.  You may change this value by editing `WEATHER_CONF_FILE` in `weather.py`
+
+##Installing
+
+Run `chmod +x weather.py` to ensure it's set to execute.  Move `weather.py` to into a directory in your `$PATH` variable (`/usr/bin` or `/usr/local/bin` typically). Optionally rename it to `weather`.   
