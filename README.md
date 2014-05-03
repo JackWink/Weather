@@ -36,3 +36,40 @@ Edit your `~/.weatherrc` file to include your API key.  If you like metric units
 ##Installing
 
 Run `chmod +x weather.py` to ensure it's set to execute.  Move `weather.py` to into a directory in your `$PATH` variable (`/usr/bin` or `/usr/local/bin` typically). Optionally rename it to `weather`.   
+
+##Output
+
+Sample output:
+
+	jackwink: weather (master) $ weather -o
+
+	36 Hour Hourly Forecast:
+	Date               Hour  Temperature  Chance of Rain         Weather
+	--------------------------------------------------------------------------
+	May 02, 2014   11:00 PM        48 °F             60%  Chance of Rain
+	May 03, 2014   12:00 AM        48 °F             60%  Chance of Rain
+	May 03, 2014    1:00 AM        48 °F             60%  Chance of Rain
+	May 03, 2014    2:00 AM        48 °F             60%  Chance of Rain
+	May 03, 2014    3:00 AM        47 °F             60%  Chance of Rain
+	May 03, 2014    4:00 AM        47 °F             60%  Chance of Rain
+	May 03, 2014    5:00 AM        46 °F             60%    Rain Showers
+	May 03, 2014    6:00 AM        47 °F             60%    Rain Showers
+	May 03, 2014    7:00 AM        49 °F             60%    Rain Showers
+	May 03, 2014    8:00 AM        50 °F             60%  Chance of Rain
+	May 03, 2014    9:00 AM        52 °F             60%  Chance of Rain
+	May 03, 2014   10:00 AM        53 °F             60%  Chance of Rain
+	...
+	jackwink: weather (master) $ weather -f
+
+	Weather Forecast:
+	Date               Condition  Chance of Rain   Temp (Hi/Lo)         Wind  Humidity
+	-----------------------------------------------------------------------------------------
+	May 2, 2014     Rain Showers             30%  61 °F / 45 °F   ~13mph WSW       76%
+	May 3, 2014     Rain Showers             50%  63 °F / 41 °F   ~15mph WSW       66%
+	May 4, 2014    Partly Cloudy             10%  57 °F / 36 °F    ~15mph NW       61%
+	May 5, 2014   Chance of Rain             20%  59 °F / 36 °F  ~6mph South       63%
+	jackwink: weather (master) $ weather
+	Weather for Ann Arbor, MI
+	Currently: 49.2 F (9.6 C) Rain
+	Wind: From the SSW at 8.0 MPH Gusting to 11.0 MPH
+	Humidity: 88%
