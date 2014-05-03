@@ -23,7 +23,15 @@ You need to sign up for an API key from weather underground `http://www.wundergr
 
 ##Configuring
 
-Run weather.py to generate a `.weatherrc` file, which by default installs into your home directory.  You may change this value by editing `WEATHER_CONF_FILE` in `weather.py`
+Run weather.py to generate a `.weatherrc` file, which by default installs into your home directory.  You may change it's install location by editing `WEATHER_CONF_FILE` in `weather.py`
+
+Edit your `~/.weatherrc` file to include your API key.  If you like metric units by default, set `metric` to true. A sample `.weatherrc` file is provided below.
+
+	{
+		"api_key": "your-api-key",
+		"metric": false
+	}
+	
 
 ##Installing
 
