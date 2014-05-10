@@ -42,7 +42,6 @@ Run `chmod +x weather.py` to ensure it's set to execute.  Move `weather.py` to i
 Sample output:
 
 	jackwink: weather (master) $ weather -o
-
 	36 Hour Hourly Forecast:
 	Date               Hour  Temperature  Chance of Rain         Weather
 	--------------------------------------------------------------------------
@@ -60,7 +59,6 @@ Sample output:
 	May 03, 2014   10:00 AM        53 °F             60%  Chance of Rain
 	...
 	jackwink: weather (master) $ weather -f
-
 	Weather Forecast:
 	Date               Condition  Chance of Rain   Temp (Hi/Lo)         Wind  Humidity
 	-----------------------------------------------------------------------------------------

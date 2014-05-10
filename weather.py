@@ -60,7 +60,6 @@ class ResultPrinter(object):
             out = codecs.getwriter('utf8')(sys.stdout)
 
         if not settings:
-            print "No Settings!"
             settings = Settings()
 
         self.out      = out
@@ -78,7 +77,17 @@ class ResultPrinter(object):
         Prints the current weather conditions
         """
         print >> self.out, "Weather for " + data['display_location']['full']
-        print >> self.out, "Currently: "  + data['temperature_string'] + " " + data['weather']
+
+        if self.settings.metric:
+            temp_c = self._format_degree({"metric": data['temp_c']}, metric=True)
+            temp_f = self._format_degree({"english": data['temp_f']}, metric=False)
+            self.out.write(u"Currently: {0} ({1}) {2}".format(temp_c, temp_f, data["weather"]))
+        else:
+            temp_c = self._format_degree({"metric": data['temp_c']}, metric=True)
+            temp_f = self._format_degree({"english": data['temp_f']}, metric=False)
+            self.out.write(u"Currently: {0} ({1}) {2}".format(temp_f, temp_c, data["weather"]))
+
+        print >> self.out, ""
         print >> self.out, "Wind: "       + data['wind_string']
         print >> self.out, "Humidity: "   + data['relative_humidity']
 
@@ -155,15 +164,18 @@ class ResultPrinter(object):
         """
         return max([len(row[column_index]) for row in table])
 
-    def _format_degree(self, temp_dict):
+    def _format_degree(self, temp_dict, metric=None):
         """
         Takes a dictionary from the Weather underground api
         and returns a formatted temperature string ex: "62 °F", "25 °C"
         """
         degree = u"\u00B0"
 
+        if metric is None:
+            metric = self.settings.metric
+
         temp = None
-        if self.settings.metric:
+        if metric:
             if "celsius" in temp_dict:
                 temp = temp_dict["celsius"]
             elif "metric" in temp_dict:
@@ -178,7 +190,7 @@ class ResultPrinter(object):
         # as both strings and ints
         temp = "{0:3}".format(str(temp)) + degree
 
-        if self.settings.metric:
+        if metric:
             return temp + "C"
         else:
             return temp + "F"
