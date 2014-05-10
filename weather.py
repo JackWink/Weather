@@ -17,7 +17,10 @@ class Settings(object):
     settings  = None
     file_path = None
 
-    def __init__(self):
+    def __init__(self, args=None):
+        if not args:
+            args = {}
+
         if not Settings.settings:
             Settings.file_path = os.path.expanduser(WEATHER_CONF_FILE)
             if not os.path.exists(Settings.file_path):
@@ -25,6 +28,9 @@ class Settings(object):
 
             with open(Settings.file_path) as weatherrc:
                 Settings.settings = json.load(weatherrc)
+
+        if "metric" in args:
+            Settings.settings["metric"] = args.metric
 
     def _generate_default_weatherrc(self):
         """
@@ -48,13 +54,17 @@ class ResultPrinter(object):
     in a formatted manner.
     """
 
-    def __init__(self, out=None):
+    def __init__(self, out=None, settings=None):
         if not out:
             # Wrap sys.stdout in a utf8 stream writer in case output is piped
             out = codecs.getwriter('utf8')(sys.stdout)
 
+        if not settings:
+            print "No Settings!"
+            settings = Settings()
+
         self.out      = out
-        self.settings = Settings()
+        self.settings = settings
 
     def print_alerts(self, data):
         """
@@ -205,10 +215,10 @@ def print_weather_data(data, args):
     if 'results' in data['response']:
         print "More than 1 city matched your query, try being more specific"
         for result in data['response']['results']:
-            print result['name'] + ", " + result['state'] + " " + result['country_name']
+            print "{0}, {1} {2}".format(result['name'], result['state'], result['country_name'])
         return
 
-    result_printer = ResultPrinter()
+    result_printer = ResultPrinter(settings=Settings(args=args))
     if args.alerts:
         result_printer.print_alerts(data)
     if args.now:
