@@ -56,14 +56,12 @@ class ResultPrinter(object):
         self.out      = out
         self.settings = Settings()
 
-
     def print_alerts(self, data):
         """
         Prints any weather alerts in red
         """
         for alert in data['alerts']:
             print >> self.out, "\033[91m" + alert['message'].rstrip("\n") + "\nExpires: " + alert['expires'] + "\033[0m"
-
 
     def print_conditions(self, data):
         """
@@ -73,7 +71,6 @@ class ResultPrinter(object):
         print >> self.out, "Currently: "  + data['temperature_string'] + " " + data['weather']
         print >> self.out, "Wind: "       + data['wind_string']
         print >> self.out, "Humidity: "   + data['relative_humidity']
-
 
     def print_hourly(self, data):
         """
@@ -92,7 +89,6 @@ class ResultPrinter(object):
 
         print >> self.out, "36 Hour Hourly Forecast:"
         self._print_table(val)
-
 
     def print_forecast(self, data):
         """
@@ -113,15 +109,6 @@ class ResultPrinter(object):
 
         print >> self.out, "Weather Forecast:"
         self._print_table(val)
-
-
-
-
-    def _get_max_col_width(self, table, column_index):
-        """
-        Returns the length of the longest string in any column
-        """
-        return max([len(row[column_index]) for row in table])
 
     def _print_table(self, table):
         """
@@ -152,6 +139,11 @@ class ResultPrinter(object):
 
             print >> self.out, ""
 
+    def _get_max_col_width(self, table, column_index):
+        """
+        Returns the length of the longest string in any column
+        """
+        return max([len(row[column_index]) for row in table])
 
     def _format_degree(self, temp_dict):
         """
