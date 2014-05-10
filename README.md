@@ -1,4 +1,6 @@
-#Weather
+#Weather 
+
+[![Build Status](https://travis-ci.org/JackWink/Weather.svg?branch=master)](https://travis-ci.org/JackWink/Weather)
 
 Weather is a small command line python script to grab the current weather and/or weather forcast from weather underground and display it nicely in the terminal.
 
