@@ -69,6 +69,9 @@ class ResultPrinter(object):
         """
         Prints any weather alerts in red
         """
+        if not len(data['alerts']):
+            print >> self.out, "No alerts for {0}".format(data['current_observation']['display_location']['full'])
+
         for alert in data['alerts']:
             print >> self.out, "\033[91m" + alert['message'].rstrip("\n") + "\nExpires: " + alert['expires'] + "\033[0m"
 
@@ -76,7 +79,7 @@ class ResultPrinter(object):
         """
         Prints the current weather conditions
         """
-        print >> self.out, "Weather for " + data['display_location']['full']
+        print >> self.out, "Weather for {0}".format(data['display_location']['full'])
 
         if self.settings.metric:
             temp_c = self._format_degree({"metric": data['temp_c']}, metric=True)
@@ -88,8 +91,8 @@ class ResultPrinter(object):
             self.out.write(u"Currently: {0} ({1}) {2}".format(temp_f, temp_c, data["weather"]))
 
         print >> self.out, ""
-        print >> self.out, "Wind: "       + data['wind_string']
-        print >> self.out, "Humidity: "   + data['relative_humidity']
+        print >> self.out, "Wind: {0}".format(data['wind_string'])
+        print >> self.out, "Humidity: {0}".format(data['relative_humidity'])
 
     def print_hourly(self, data):
         """
@@ -102,7 +105,7 @@ class ResultPrinter(object):
         for item in data:
             # Format the date and temp strings before appending to the array
             time = item["FCTTIME"]
-            date = self._format_date(time["mon_abbrev"], time["mday_padded"], time["year"])
+            date = self._format_date(time["mon_abbrev"], time["mday"], time["year"])
             temp = self._format_degree(item["temp"])
             val.append([date, time['civil'], temp,  item["pop"] + "%", item['condition']])
 
@@ -233,12 +236,16 @@ def print_weather_data(data, args):
     result_printer = ResultPrinter(settings=Settings(args=args))
     if args.alerts:
         result_printer.print_alerts(data)
+        print ""
     if args.now:
         result_printer.print_conditions(data['current_observation'])
+        print ""
     if args.hourly:
         result_printer.print_hourly(data['hourly_forecast'])
+        print ""
     if args.forecast:
         result_printer.print_forecast(data['forecast']['simpleforecast']['forecastday'])
+        print ""
 
 
 def make_query_path(args):
@@ -249,25 +256,22 @@ def make_query_path(args):
     query = ""
 
     paths = {
-        "now": "conditions/",
+        "now": "conditions/alerts/",
         "forecast": "forecast/",
         "hourly": "hourly/",
-        "alerts": "alerts/",
     }
 
     # In the case no options are set, use the default
     if not (args.now or args.hourly or args.alerts or args.forecast):
         args.now = True
-        args.alerts = True
 
-    if (args.now):
+
+    if args.now or args.alerts:
         query += paths['now']
-    if (args.hourly):
+    if args.hourly:
         query += paths['hourly']
-    if (args.forecast):
+    if args.forecast:
         query += paths['forecast']
-    if (args.alerts):
-        query += paths['alerts']
 
     return query
 
@@ -304,7 +308,7 @@ if __name__ == "__main__":
     parser.add_argument('-n', '--now', help='Get the current conditions (Default)', action='store_true')
     parser.add_argument('-f', '--forecast', help='Get the current forecast', action='store_true')
     parser.add_argument('-o', '--hourly', help='Get the hourly forecast', action='store_true')
-    parser.add_argument('-a', '--alerts', help='View any current weather alerts (Default)', action='store_true')
+    parser.add_argument('-a', '--alerts', help='View any current weather alerts', action='store_true')
     parser.add_argument('-m', '--metric', help='Use metric units instead of English units', action='store_true')
 
     main(parser.parse_args())
