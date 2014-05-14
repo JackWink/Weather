@@ -55,7 +55,6 @@ class TestSettingsFunctions(unittest.TestCase):
         """
         Test that the loading Settings overrides the default conf file
         """
-
         self._write_conf("12341234", "true")
         s = weather.Settings()
         self.assertTrue(s.metric)
@@ -67,7 +66,6 @@ class TestSettingsFunctions(unittest.TestCase):
         s = weather.Settings()
         self.assertFalse(s.metric)
         self.assertEqual(s.api_key, "1234")
-
 
 
 if __name__ == "__main__":

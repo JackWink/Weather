@@ -55,7 +55,7 @@ class ResultPrinter(object):
     """
 
     def __init__(self, out=None, settings=None):
-        if not out:
+        if out is None:
             # Wrap sys.stdout in a utf8 stream writer in case output is piped
             out = codecs.getwriter('utf8')(sys.stdout)
 
