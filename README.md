@@ -73,4 +73,7 @@ Run `chmod +x weather.py` to ensure it's set to execute.  Move `weather.py` to i
 
 ##Testing
 
-Install nose if you don't have it (`pip install nose`) and run `nosetests` in the root directory
+Install the requirements.txt file, you'll need coverage and nose. If you're using windows or linux, edit the Makefile and uncomment the line relative to your OS.  
+
+Run `make test` to run the unit tests, and `make` if you want to run the unit tests and generate a coverage report.
+
