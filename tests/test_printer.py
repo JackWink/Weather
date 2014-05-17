@@ -2,23 +2,7 @@ import weather
 import unittest
 import sys
 
-class MockArgs(object):
-    def __init__(self, metric):
-        self.metric = metric
-
-    def __iter__(self):
-        yield "metric"
-
-class MockIO(object):
-    def __init__(self):
-        self.captured_out = []
-
-    def write(self, string):
-        self.captured_out.append(string)
-
-    def clear(self):
-        self.captured_out = []
-
+from weather_mock import MockArgs, MockIO
 
 class TestPrinterFunctions(unittest.TestCase):
     def setUp(self):
@@ -63,6 +47,20 @@ class TestPrinterFunctions(unittest.TestCase):
         self.assertEqual(len(self.spy.captured_out), 2)
         self.assertEqual(self.spy.captured_out[0], '\x1b[91m1234\nExpires: never!\x1b[0m')
         self.assertEqual(self.spy.captured_out[1], '\n')
+
+    def test_print_conditions(self):
+        pass
+
+    def test_print_forecast(self):
+        pass
+
+    def test_print_hourly(self):
+        pass
+
+    def test_print_weather_data(self):
+        pass
+
+
 
 
 

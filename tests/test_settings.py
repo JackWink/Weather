@@ -3,15 +3,7 @@ import weather
 import os
 import shutil
 import json
-
-class Args(object):
-    def __init__(self, metric=False, api_key="1234"):
-        self.metric = metric
-        self.api_key = api_key
-
-    def __iter__(self):
-        yield "api_key"
-        yield "metric"
+from weather_mock import MockArgs
 
 class TestSettingsFunctions(unittest.TestCase):
     def setUp(self):
@@ -83,7 +75,7 @@ class TestSettingsFunctions(unittest.TestCase):
         self._write_conf("12341234", "true")
         s = weather.Settings()
         self.assertTrue(s.metric)
-        s = weather.Settings(Args())
+        s = weather.Settings(MockArgs())
         self.assertFalse(s.metric)
         self.assertEqual(s.api_key, "12341234")
 
