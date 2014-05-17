@@ -4,6 +4,15 @@ import os
 import shutil
 import json
 
+class Args(object):
+    def __init__(self, metric=False, api_key="1234"):
+        self.metric = metric
+        self.api_key = api_key
+
+    def __iter__(self):
+        yield "api_key"
+        yield "metric"
+
 class TestSettingsFunctions(unittest.TestCase):
     def setUp(self):
         self.conf_path = os.path.expanduser(weather.WEATHER_CONF_FILE)
@@ -66,6 +75,18 @@ class TestSettingsFunctions(unittest.TestCase):
         s = weather.Settings()
         self.assertFalse(s.metric)
         self.assertEqual(s.api_key, "1234")
+
+    def test_argument_override(self):
+        """
+        Test to ensure that arguments can override metric, but not API key setting
+        """
+        self._write_conf("12341234", "true")
+        s = weather.Settings()
+        self.assertTrue(s.metric)
+        s = weather.Settings(Args())
+        self.assertFalse(s.metric)
+        self.assertEqual(s.api_key, "12341234")
+
 
 
 if __name__ == "__main__":
