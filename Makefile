@@ -10,3 +10,7 @@ coverage:
 	$(OPEN) cover/index.html 
 test:
 	nosetests 
+clean:
+	rm -rf *.pyc
+	rm -rf tests/*.pyc
+	rm -rf cover
