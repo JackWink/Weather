@@ -49,7 +49,48 @@ class TestPrinterFunctions(unittest.TestCase):
         self.assertEqual(self.spy.captured_out[1], '\n')
 
     def test_print_conditions(self):
-        pass
+        printer = weather.ResultPrinter(self.spy)
+        printer.print_conditions(self._gen_conditions_dict(metric_larger=False))
+        self.assertEqual(len(self.spy.captured_out), 8)
+        print self.spy.captured_out
+        self.assertEqual(self.spy.captured_out[0], 'Weather for Ann Arbor')
+        self.assertEqual(self.spy.captured_out[1], '\n')
+        self.assertEqual(self.spy.captured_out[2], u'Currently: 45 \xb0F (44 \xb0C) Light showers')
+        self.assertEqual(self.spy.captured_out[3], '\n')
+        self.assertEqual(self.spy.captured_out[4], 'Wind: Calm')
+        self.assertEqual(self.spy.captured_out[5], '\n')
+        self.assertEqual(self.spy.captured_out[6], 'Humidity: 37')
+        self.assertEqual(self.spy.captured_out[7], '\n')
+
+        self.spy.clear()
+        printer = weather.ResultPrinter(settings=weather.Settings(MockArgs(metric=True)), out=self.spy)
+        printer.print_conditions(self._gen_conditions_dict(metric_larger=False))
+        self.assertTrue(printer.settings.metric)
+        self.assertEqual(len(self.spy.captured_out), 8)
+        self.assertEqual(self.spy.captured_out[0], 'Weather for Ann Arbor')
+        self.assertEqual(self.spy.captured_out[1], '\n')
+        self.assertEqual(self.spy.captured_out[2], u'Currently: 44 \xb0C (45 \xb0F) Light showers')
+        self.assertEqual(self.spy.captured_out[3], '\n')
+        self.assertEqual(self.spy.captured_out[4], 'Wind: Calm')
+        self.assertEqual(self.spy.captured_out[5], '\n')
+        self.assertEqual(self.spy.captured_out[6], 'Humidity: 37')
+        self.assertEqual(self.spy.captured_out[7], '\n')
+
+
+    def _gen_conditions_dict(self, city="Ann Arbor", weather="Light showers", temp=45, metric_larger=False, wind="Calm", humidity=37):
+        """
+        Generate a dictionary with the data for print_conditions
+
+        C will be one less than F if metric_larger is True, if metric_larger is False, F will be one degree larger than C
+        """
+        temp_key = "temp_f"
+        other_temp_key = "temp_c"
+        if metric_larger:
+            temp_key = "temp_c"
+            other_temp_key = "temp_f"
+
+        return { 'display_location': {'full': city }, temp_key: temp, other_temp_key: temp-1,
+                 'weather': weather, 'wind_string': wind, 'relative_humidity': humidity }
 
     def test_print_forecast(self):
         pass

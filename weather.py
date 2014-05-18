@@ -82,15 +82,14 @@ class ResultPrinter(object):
         print >> self.out, "Weather for {0}".format(data['display_location']['full'])
 
         if self.settings.metric:
-            temp_c = self._format_degree({"metric": data['temp_c']}, metric=True)
-            temp_f = self._format_degree({"english": data['temp_f']}, metric=False)
-            self.out.write(u"Currently: {0} ({1}) {2}".format(temp_c, temp_f, data["weather"]))
+            temp_c = self._format_degree({"metric": data['temp_c']}, True)
+            temp_f = self._format_degree({"english": data['temp_f']}, False)
+            print >> self.out, u"Currently: {0} ({1}) {2}".format(temp_c, temp_f, data["weather"])
         else:
-            temp_c = self._format_degree({"metric": data['temp_c']}, metric=True)
-            temp_f = self._format_degree({"english": data['temp_f']}, metric=False)
-            self.out.write(u"Currently: {0} ({1}) {2}".format(temp_f, temp_c, data["weather"]))
+            temp_c = self._format_degree({"metric": data['temp_c']}, True)
+            temp_f = self._format_degree({"english": data['temp_f']}, False)
+            print >> self.out, u"Currently: {0} ({1}) {2}".format(temp_f, temp_c, data["weather"])
 
-        print >> self.out, ""
         print >> self.out, "Wind: {0}".format(data['wind_string'])
         print >> self.out, "Humidity: {0}".format(data['relative_humidity'])
 
@@ -106,7 +105,7 @@ class ResultPrinter(object):
             # Format the date and temp strings before appending to the array
             time = item["FCTTIME"]
             date = self._format_date(time["mon_abbrev"], time["mday"], time["year"])
-            temp = self._format_degree(item["temp"])
+            temp = self._format_degree(item["temp"], self.settings.metric)
             val.append([date, time['civil'], temp,  item["pop"] + "%", item['condition']])
 
         print >> self.out, "36 Hour Hourly Forecast:"
@@ -123,7 +122,7 @@ class ResultPrinter(object):
         for item in data:
             date = item['date']
             date_str = self._format_date(date['monthname'], date['day'], date['year'])
-            temp     = self._format_degree(item['high']) + " / " + self._format_degree(item['low'])
+            temp     = self._format_degree(item['high'], self.settings.metric) + " / " + self._format_degree(item['low'], self.settings.metric)
             wind     = self._format_windspeed(item['avewind'])
 
             hum = str(item["avehumidity"]) + "%"
@@ -167,15 +166,12 @@ class ResultPrinter(object):
         """
         return max([len(row[column_index]) for row in table])
 
-    def _format_degree(self, temp_dict, metric=None):
+    def _format_degree(self, temp_dict, metric):
         """
         Takes a dictionary from the Weather underground api
         and returns a formatted temperature string ex: "62 °F", "25 °C"
         """
         degree = u"\u00B0"
-
-        if metric is None:
-            metric = self.settings.metric
 
         temp = None
         if metric:
@@ -193,10 +189,8 @@ class ResultPrinter(object):
         # as both strings and ints
         temp = "{0:3}".format(str(temp)) + degree
 
-        if metric:
-            return temp + "C"
-        else:
-            return temp + "F"
+
+        return temp + "C" if metric else temp + "F"
 
     def _format_windspeed(self, windspeed_dict):
         """
