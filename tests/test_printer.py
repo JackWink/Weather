@@ -77,11 +77,12 @@ class TestPrinterFunctions(unittest.TestCase):
         self.assertEqual(self.spy.captured_out[7], '\n')
 
 
-    def _gen_conditions_dict(self, city="Ann Arbor", weather="Light showers", temp=45, metric_larger=False, wind="Calm", humidity=37):
+    def _gen_conditions_dict(self, city="Ann Arbor", weather="Light showers", temp=45,
+                                   metric_larger=False, wind="Calm", humidity=37):
         """
         Generate a dictionary with the data for print_conditions
 
-        C will be one less than F if metric_larger is True, if metric_larger is False, F will be one degree larger than C
+        C will be one less than F if metric_larger is True.
         """
         temp_key = "temp_f"
         other_temp_key = "temp_c"
