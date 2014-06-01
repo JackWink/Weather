@@ -50,10 +50,9 @@ Sample Usage:
 - Requests
 - Weather Underground API key 
 
-##Requirements
 If you don't have requests installed, install it! `pip install -r requirements.txt` or `pip install requests` 
 
-You need to sign up for an API key from weather underground `http://www.wunderground.com/weather/api/`.  You'll want the Cumulus feature plan, as long as you select the developer usage plan, it's free.  
+You'll need to sign up for an API key from weather underground `http://www.wunderground.com/weather/api/`.  You'll want the Cumulus feature plan and as long as you select the developer usage plan, it's free.  
 
 ##Configuring
 
