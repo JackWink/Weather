@@ -41,6 +41,7 @@ Sample Usage:
 - `-n`, `--now`  Gives the current weather conditions 
 - `-o`, `--hourly`  Gives an overview of the hourly forcast for the next 36 hours 
 - `-f`, `--forecast`  Gives an overview of the daily forecast 
+- `-e`, `--extended`  Gives an overview of the extended forecast 
 - `-m`, `--metric` Uses metric units instead of English 
 - `-h`, `--help`  Prints out a help message
 - `location`  The only argument without a flag, you can look up via zipcode or XX/CITY where XX is the state initial.  By default, it uses geoip to get your location
