@@ -47,7 +47,6 @@ class Settings(object):
         return Settings.settings[attr]
 
 
-
 class ResultPrinter(object):
     """
     Responsible for printing weather underground API results
@@ -65,6 +64,7 @@ class ResultPrinter(object):
         self.out      = out
         self.settings = settings
 
+
     def print_alerts(self, data):
         """
         Prints any weather alerts in red
@@ -74,6 +74,7 @@ class ResultPrinter(object):
 
         for alert in data['alerts']:
             print >> self.out, "\033[91m" + alert['message'].rstrip("\n") + "\nExpires: " + alert['expires'] + "\033[0m"
+
 
     def print_conditions(self, data):
         """
@@ -92,6 +93,8 @@ class ResultPrinter(object):
 
         print >> self.out, "Wind: {0}".format(data['wind_string'])
         print >> self.out, "Humidity: {0}".format(data['relative_humidity'])
+
+
 
     def print_hourly(self, data, time_format):
         """
@@ -115,6 +118,7 @@ class ResultPrinter(object):
         print >> self.out, "36 Hour Hourly Forecast:"
         self._print_table(val)
 
+
     def print_forecast(self, data):
         """
         Prints the forcast data in a table
@@ -134,6 +138,7 @@ class ResultPrinter(object):
 
         print >> self.out, "Weather Forecast:"
         self._print_table(val)
+
 
     def _print_table(self, table):
         """
@@ -164,11 +169,13 @@ class ResultPrinter(object):
 
             print >> self.out, ""
 
+
     def _get_max_col_width(self, table, column_index):
         """
         Returns the length of the longest string in any column
         """
         return max([len(row[column_index]) for row in table])
+
 
     def _format_degree(self, temp_dict, metric):
         """
@@ -196,6 +203,7 @@ class ResultPrinter(object):
 
         return temp + "C" if metric else temp + "F"
 
+
     def _format_windspeed(self, windspeed_dict):
         """
         Returns a formatted windspeed
@@ -207,6 +215,7 @@ class ResultPrinter(object):
             windspeed = str(windspeed_dict['mph']) + "mph"
 
         return "~{0:5} {1:3}".format(windspeed, windspeed_dict['dir'])
+
 
     def _format_date(self, month, day):
         """
@@ -279,6 +288,7 @@ def make_query_path(args):
         query += paths['extended']
     return query
 
+
 def make_api_url(args):
     """
     Returns a url to the weather underground API endpoint by parsing
@@ -295,8 +305,6 @@ def make_api_url(args):
         query = query % "autoip"
 
     return base_url + make_query_path(args) + query
-
-
 
 
 def main(args):
