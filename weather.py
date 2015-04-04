@@ -240,6 +240,9 @@ def print_weather_data(data, args):
     if args.forecast:
         result_printer.print_forecast(data['forecast']['simpleforecast']['forecastday'])
         print ""
+    if args.extended:
+        result_printer.print_forecast(data['forecast']['simpleforecast']['forecastday'])
+        print ""
 
 
 def make_query_path(args):
@@ -252,11 +255,12 @@ def make_query_path(args):
     paths = {
         "now": "conditions/alerts/",
         "forecast": "forecast/",
+        "extended": "forecast10day/",
         "hourly": "hourly/",
     }
 
     # In the case no options are set, use the default
-    if not (args.now or args.hourly or args.alerts or args.forecast):
+    if not (args.now or args.hourly or args.alerts or args.forecast or args.extended):
         args.now = True
 
 
@@ -266,7 +270,8 @@ def make_query_path(args):
         query += paths['hourly']
     if args.forecast:
         query += paths['forecast']
-
+    if args.extended:
+        query += paths['extended']
     return query
 
 def make_api_url(args):
@@ -301,6 +306,7 @@ if __name__ == "__main__":
     parser.add_argument('location', nargs='*', help='Optional location, by default uses geoip')
     parser.add_argument('-n', '--now', help='Get the current conditions (Default)', action='store_true')
     parser.add_argument('-f', '--forecast', help='Get the current forecast', action='store_true')
+    parser.add_argument('-e', '--extended', help='Get the 10 day forecast', action='store_true')
     parser.add_argument('-o', '--hourly', help='Get the hourly forecast', action='store_true')
     parser.add_argument('-a', '--alerts', help='View any current weather alerts', action='store_true')
     parser.add_argument('-m', '--metric', help='Use metric units instead of English units', action='store_true')
