@@ -208,7 +208,8 @@ class ResultPrinter(object):
         """
         Returns a formatted date string
         """
-        return "{0} {1:3} {2:4}".format(month, str(day)+",", str(year))
+        #return "{0} {1:3} {2:4}".format(month, str(day)+",", str(year))
+        return "{0} {1:3}".format(month, str(day))
 
 
 def print_weather_data(data, args):
