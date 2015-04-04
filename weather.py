@@ -113,7 +113,7 @@ class ResultPrinter(object):
 
     def print_forecast(self, data):
         """
-        Prints the 3 day forcast data in a table
+        Prints the forcast data in a table
         """
         val = []
         # Need to generate an array to send the print_table, first row must be the keys
