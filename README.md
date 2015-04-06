@@ -29,10 +29,10 @@ Sample Usage:
 	Weather Forecast:
 	Date                          Condition  Chance of Rain   Temp (Hi/Lo)        Wind  Humidity
 	---------------------------------------------------------------------------------------------------
-	May 9,  2014              Partly Cloudy             20%  79 °F / 53 °F  ~0mph            82%
-	May 10, 2014              Partly Cloudy              0%  70 °F / 47 °F  ~14mph W         57%
-	May 11, 2014   Chance of a Thunderstorm             40%  76 °F / 60 °F  ~11mph SSE       83%
-	May 12, 2014   Chance of a Thunderstorm             60%  81 °F / 64 °F  ~16mph SSW       85%
+	May 9                     Partly Cloudy             20%  79 °F / 53 °F  ~0mph            82%
+	May 10                    Partly Cloudy              0%  70 °F / 47 °F  ~14mph W         57%
+	May 11         Chance of a Thunderstorm             40%  76 °F / 60 °F  ~11mph SSE       83%
+	May 12         Chance of a Thunderstorm             60%  81 °F / 64 °F  ~16mph SSW       85%
 	
 	jackwink: weather (master) $ 
 
@@ -41,7 +41,10 @@ Sample Usage:
 - `-n`, `--now`  Gives the current weather conditions 
 - `-o`, `--hourly`  Gives an overview of the hourly forcast for the next 36 hours 
 - `-f`, `--forecast`  Gives an overview of the daily forecast 
+- `-e`, `--extended`  Gives an overview of the extended forecast 
+- `-t`, `--time`  {civil, military}  Set time format
 - `-m`, `--metric` Uses metric units instead of English 
+- `-a`, `--alert` View any current weather alerts
 - `-h`, `--help`  Prints out a help message
 - `location`  The only argument without a flag, you can look up via zipcode or XX/CITY where XX is the state initial.  By default, it uses geoip to get your location
 
