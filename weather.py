@@ -48,6 +48,10 @@ class Settings(object):
 
 
 
+FORMAT_STRINGS = {
+    'windspeed': "~{0:2}{1} {2:3}",
+}
+
 class ResultPrinter(object):
     """
     Responsible for printing weather underground API results
@@ -196,13 +200,14 @@ class ResultPrinter(object):
         """
         Returns a formatted windspeed
         """
-        windspeed = None
-        if self.settings.metric:
-            windspeed = str(windspeed_dict['kph']) + "kph"
-        else:
-            windspeed = str(windspeed_dict['mph']) + "mph"
+        fmt = FORMAT_STRINGS['windspeed']
+        direction = windspeed_dict['dir']
+        unit = 'mph'
 
-        return "~{0:5} {1:3}".format(windspeed, windspeed_dict['dir'])
+        if self.settings.metric:
+            unit = 'kph'
+
+        return fmt.format(str(windspeed_dict[unit]), unit, direction)
 
     def _format_date(self, month, day, year):
         """
