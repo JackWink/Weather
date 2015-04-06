@@ -46,21 +46,11 @@ class Settings(object):
         """
         return Settings.settings[attr]
 
-
-
-FORMAT_STRINGS = {
-    'windspeed': "~{0:2}{1} {2:3}",
-    'date': "{0} {1:3}",
-    'temp': u"{0:3}\u00B0{1:1}",
-}
-
-
 class ResultPrinter(object):
     """
     Responsible for printing weather underground API results
     in a formatted manner.
     """
-
     def __init__(self, out=None, settings=None):
         if out is None:
             # Wrap sys.stdout in a utf8 stream writer in case output is piped
@@ -72,7 +62,6 @@ class ResultPrinter(object):
         self.out      = out
         self.settings = settings
 
-
     def print_alerts(self, data):
         """
         Prints any weather alerts in red
@@ -83,26 +72,21 @@ class ResultPrinter(object):
         for alert in data['alerts']:
             print >> self.out, "\033[91m" + alert['message'].rstrip("\n") + "\nExpires: " + alert['expires'] + "\033[0m"
 
-
     def print_conditions(self, data):
         """
         Prints the current weather conditions
         """
         print >> self.out, "Weather for {0}".format(data['display_location']['full'])
 
+        temp_c = format_degree({"metric": data['temp_c']}, True)
+        temp_f = format_degree({"english": data['temp_f']}, False)
         if self.settings.metric:
-            temp_c = self._format_degree({"metric": data['temp_c']}, True)
-            temp_f = self._format_degree({"english": data['temp_f']}, False)
             print >> self.out, u"Currently: {0} ({1}) {2}".format(temp_c, temp_f, data["weather"])
         else:
-            temp_c = self._format_degree({"metric": data['temp_c']}, True)
-            temp_f = self._format_degree({"english": data['temp_f']}, False)
             print >> self.out, u"Currently: {0} ({1}) {2}".format(temp_f, temp_c, data["weather"])
 
         print >> self.out, "Wind: {0}".format(data['wind_string'])
         print >> self.out, "Humidity: {0}".format(data['relative_humidity'])
-
-
 
     def print_hourly(self, data, time_format):
         """
@@ -116,7 +100,7 @@ class ResultPrinter(object):
             # Format the date and temp strings before appending to the array
             time = item["FCTTIME"]
             date = format_date(time["mon_abbrev"], time["mday"])
-            temp = self._format_degree(item["temp"], self.settings.metric)
+            temp = format_degree(item["temp"], self.settings.metric)
 
             if time_format == 'military':
                 val.append([date, time['hour_padded'] + ":" + time['min'], temp,  item["pop"] + "%", item['condition']])
@@ -125,7 +109,6 @@ class ResultPrinter(object):
 
         print >> self.out, "36 Hour Hourly Forecast:"
         self._print_table(val)
-
 
     def print_forecast(self, data):
         """
@@ -138,7 +121,7 @@ class ResultPrinter(object):
         for item in data:
             date = item['date']
             date_str = format_date(date['monthname'], date['day'])
-            temp     = self._format_degree(item['high'], self.settings.metric) + " / " + self._format_degree(item['low'], self.settings.metric)
+            temp     = format_degree(item['high'], self.settings.metric) + " / " + format_degree(item['low'], self.settings.metric)
             wind     = format_windspeed(item['avewind'], self.settings.metric)
 
             hum = str(item["avehumidity"]) + "%"
@@ -146,7 +129,6 @@ class ResultPrinter(object):
 
         print >> self.out, "Weather Forecast:"
         self._print_table(val)
-
 
     def _print_table(self, table):
         """
@@ -164,7 +146,6 @@ class ResultPrinter(object):
             col = table[0][i].rjust(max_col_widths[i] + 2)
             self.out.write(col)
 
-
         print >> self.out, ""
         print >> self.out, "-" * (sum(max_col_widths) + 3 * len(max_col_widths))
 
@@ -177,34 +158,31 @@ class ResultPrinter(object):
 
             print >> self.out, ""
 
-
     def _get_max_col_width(self, table, column_index):
         """
         Returns the length of the longest string in any column
         """
         return max([len(row[column_index]) for row in table])
 
-    def _format_degree(self, temp_dict, metric):
-        """
-        Takes a dictionary from the Weather underground api
-        and returns a formatted temperature string ex: "62 °F", "25 °C"
-        """
 
-        temp = None
-        if metric:
-            if "celsius" in temp_dict:
-                temp = temp_dict["celsius"]
-            elif "metric" in temp_dict:
-                temp = temp_dict["metric"]
-        else:
-            if "fahrenheit" in temp_dict:
-                temp = temp_dict["fahrenheit"]
-            elif "english" in temp_dict:
-                temp = temp_dict["english"]
+FORMAT_STRINGS = {
+    'windspeed': "~{0:2}{1} {2:3}",
+    'date': "{0} {1:3}",
+    'temp': u"{0:3}\u00B0{1:1}",
+}
 
-        # For whatever reason, weather underground returns temps
-        # as both strings and ints
-        return FORMAT_STRINGS['temp'].format(str(temp), ("C" if metric else "F"))
+def format_degree(temp_dict, metric):
+    """
+    Takes a dictionary from the Weather underground api
+    and returns a formatted temperature string ex: "62 °F", "25 °C"
+    """
+    temp = temp_dict.get('fahrenheit') or temp_dict.get('english')
+    if metric:
+        temp = temp_dict.get('celsius') or temp_dict.get('metric')
+
+    # For whatever reason, weather underground returns temps
+    # as both strings and ints
+    return FORMAT_STRINGS['temp'].format(str(temp), ("C" if metric else "F"))
 
 def format_windspeed(windspeed_dict, metric):
     """
@@ -213,7 +191,6 @@ def format_windspeed(windspeed_dict, metric):
     unit = 'kph' if metric else 'mph'
     return FORMAT_STRINGS['windspeed'].format(str(windspeed_dict[unit]), unit,
                                                   windspeed_dict['dir'])
-
 def format_date(month, day):
     """
     Returns a date string, 'April 2' for example
@@ -253,7 +230,6 @@ def print_weather_data(data, args):
         result_printer.print_forecast(data['forecast']['simpleforecast']['forecastday'])
         print ""
 
-
 def make_query_path(args):
     """
     Returns a path to use against the weather underground API
@@ -283,7 +259,6 @@ def make_query_path(args):
         query += paths['extended']
     return query
 
-
 def make_api_url(args):
     """
     Returns a url to the weather underground API endpoint by parsing
@@ -301,13 +276,10 @@ def make_api_url(args):
 
     return base_url + make_query_path(args) + query
 
-
 def main(args):
     api_url = make_api_url(args)
     r = requests.get(api_url)
-
     print_weather_data(r.content, args)
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Display the current weather, or forecast")
@@ -319,6 +291,5 @@ if __name__ == "__main__":
     parser.add_argument('-t', '--time', choices=['civil', 'military'],  help="Set time format")
     parser.add_argument('-a', '--alerts', help='View any current weather alerts', action='store_true')
     parser.add_argument('-m', '--metric', help='Use metric units instead of English units', action='store_true')
-
     main(parser.parse_args())
 
