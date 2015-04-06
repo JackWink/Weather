@@ -47,7 +47,6 @@ class Settings(object):
         return Settings.settings[attr]
 
 
-
 class ResultPrinter(object):
     """
     Responsible for printing weather underground API results
@@ -65,6 +64,7 @@ class ResultPrinter(object):
         self.out      = out
         self.settings = settings
 
+
     def print_alerts(self, data):
         """
         Prints any weather alerts in red
@@ -74,6 +74,7 @@ class ResultPrinter(object):
 
         for alert in data['alerts']:
             print >> self.out, "\033[91m" + alert['message'].rstrip("\n") + "\nExpires: " + alert['expires'] + "\033[0m"
+
 
     def print_conditions(self, data):
         """
@@ -93,7 +94,9 @@ class ResultPrinter(object):
         print >> self.out, "Wind: {0}".format(data['wind_string'])
         print >> self.out, "Humidity: {0}".format(data['relative_humidity'])
 
-    def print_hourly(self, data):
+
+
+    def print_hourly(self, data, time_format):
         """
         Prints the hourly weather data in a table
         """
@@ -104,16 +107,21 @@ class ResultPrinter(object):
         for item in data:
             # Format the date and temp strings before appending to the array
             time = item["FCTTIME"]
-            date = self._format_date(time["mon_abbrev"], time["mday"], time["year"])
+            date = self._format_date(time["mon_abbrev"], time["mday"])
             temp = self._format_degree(item["temp"], self.settings.metric)
-            val.append([date, time['civil'], temp,  item["pop"] + "%", item['condition']])
+
+            if time_format == 'military':
+                val.append([date, time['hour_padded'] + ":" + time['min'], temp,  item["pop"] + "%", item['condition']])
+            else:
+                val.append([date, time['civil'], temp,  item["pop"] + "%", item['condition']])
 
         print >> self.out, "36 Hour Hourly Forecast:"
         self._print_table(val)
 
+
     def print_forecast(self, data):
         """
-        Prints the 3 day forcast data in a table
+        Prints the forcast data in a table
         """
         val = []
         # Need to generate an array to send the print_table, first row must be the keys
@@ -121,7 +129,7 @@ class ResultPrinter(object):
 
         for item in data:
             date = item['date']
-            date_str = self._format_date(date['monthname'], date['day'], date['year'])
+            date_str = self._format_date(date['monthname'], date['day'])
             temp     = self._format_degree(item['high'], self.settings.metric) + " / " + self._format_degree(item['low'], self.settings.metric)
             wind     = self._format_windspeed(item['avewind'])
 
@@ -130,6 +138,7 @@ class ResultPrinter(object):
 
         print >> self.out, "Weather Forecast:"
         self._print_table(val)
+
 
     def _print_table(self, table):
         """
@@ -160,11 +169,13 @@ class ResultPrinter(object):
 
             print >> self.out, ""
 
+
     def _get_max_col_width(self, table, column_index):
         """
         Returns the length of the longest string in any column
         """
         return max([len(row[column_index]) for row in table])
+
 
     def _format_degree(self, temp_dict, metric):
         """
@@ -192,6 +203,7 @@ class ResultPrinter(object):
 
         return temp + "C" if metric else temp + "F"
 
+
     def _format_windspeed(self, windspeed_dict):
         """
         Returns a formatted windspeed
@@ -204,11 +216,13 @@ class ResultPrinter(object):
 
         return "~{0:5} {1:3}".format(windspeed, windspeed_dict['dir'])
 
-    def _format_date(self, month, day, year):
+
+    def _format_date(self, month, day):
         """
         Returns a formatted date string
         """
-        return "{0} {1:3} {2:4}".format(month, str(day)+",", str(year))
+        #return "{0} {1:3} {2:4}".format(month, str(day)+",", str(year))
+        return "{0} {1:3}".format(month, str(day))
 
 
 def print_weather_data(data, args):
@@ -235,9 +249,12 @@ def print_weather_data(data, args):
         result_printer.print_conditions(data['current_observation'])
         print ""
     if args.hourly:
-        result_printer.print_hourly(data['hourly_forecast'])
+        result_printer.print_hourly(data['hourly_forecast'], args.time)
         print ""
     if args.forecast:
+        result_printer.print_forecast(data['forecast']['simpleforecast']['forecastday'])
+        print ""
+    if args.extended:
         result_printer.print_forecast(data['forecast']['simpleforecast']['forecastday'])
         print ""
 
@@ -252,11 +269,12 @@ def make_query_path(args):
     paths = {
         "now": "conditions/alerts/",
         "forecast": "forecast/",
+        "extended": "forecast10day/",
         "hourly": "hourly/",
     }
 
     # In the case no options are set, use the default
-    if not (args.now or args.hourly or args.alerts or args.forecast):
+    if not (args.now or args.hourly or args.alerts or args.forecast or args.extended):
         args.now = True
 
 
@@ -266,8 +284,10 @@ def make_query_path(args):
         query += paths['hourly']
     if args.forecast:
         query += paths['forecast']
-
+    if args.extended:
+        query += paths['extended']
     return query
+
 
 def make_api_url(args):
     """
@@ -287,8 +307,6 @@ def make_api_url(args):
     return base_url + make_query_path(args) + query
 
 
-
-
 def main(args):
     api_url = make_api_url(args)
     r = requests.get(api_url)
@@ -301,7 +319,9 @@ if __name__ == "__main__":
     parser.add_argument('location', nargs='*', help='Optional location, by default uses geoip')
     parser.add_argument('-n', '--now', help='Get the current conditions (Default)', action='store_true')
     parser.add_argument('-f', '--forecast', help='Get the current forecast', action='store_true')
+    parser.add_argument('-e', '--extended', help='Get the 10 day forecast', action='store_true')
     parser.add_argument('-o', '--hourly', help='Get the hourly forecast', action='store_true')
+    parser.add_argument('-t', '--time', choices=['civil', 'military'],  help="Set time format")
     parser.add_argument('-a', '--alerts', help='View any current weather alerts', action='store_true')
     parser.add_argument('-m', '--metric', help='Use metric units instead of English units', action='store_true')
 
