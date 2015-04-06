@@ -50,6 +50,7 @@ class Settings(object):
 
 FORMAT_STRINGS = {
     'windspeed': "~{0:2}{1} {2:3}",
+    'date': "{0} {1:3}",
 }
 
 class ResultPrinter(object):
@@ -108,7 +109,7 @@ class ResultPrinter(object):
         for item in data:
             # Format the date and temp strings before appending to the array
             time = item["FCTTIME"]
-            date = self._format_date(time["mon_abbrev"], time["mday"], time["year"])
+            date = self._format_date(time["mon_abbrev"], time["mday"])
             temp = self._format_degree(item["temp"], self.settings.metric)
             val.append([date, time['civil'], temp,  item["pop"] + "%", item['condition']])
 
@@ -125,7 +126,7 @@ class ResultPrinter(object):
 
         for item in data:
             date = item['date']
-            date_str = self._format_date(date['monthname'], date['day'], date['year'])
+            date_str = self._format_date(date['monthname'], date['day'])
             temp     = self._format_degree(item['high'], self.settings.metric) + " / " + self._format_degree(item['low'], self.settings.metric)
             wind     = self._format_windspeed(item['avewind'])
 
@@ -209,11 +210,11 @@ class ResultPrinter(object):
 
         return fmt.format(str(windspeed_dict[unit]), unit, direction)
 
-    def _format_date(self, month, day, year):
+    def _format_date(self, month, day):
         """
         Returns a formatted date string
         """
-        return "{0} {1:3} {2:4}".format(month, str(day)+",", str(year))
+        return FORMAT_STRINGS['date'].format(month, str(day))
 
 
 def print_weather_data(data, args):
