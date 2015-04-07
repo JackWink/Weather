@@ -6,7 +6,7 @@ OPEN = open
 #OPEN = start 
 
 coverage:
-	nosetests --with-coverage --cover-package=weather --cover-html
+	nosetests --with-coverage --cover-package=weatherpy --cover-html
 	$(OPEN) cover/index.html 
 test:
 	nosetests 
