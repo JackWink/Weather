@@ -332,13 +332,8 @@ def make_api_url(args, settings):
 
     return base_url + make_query_path(args) + query
 
-def main(args):
-    settings = Settings(args)
-    api_url = make_api_url(args, settings)
-    r = requests.get(api_url)
-    print_weather_data(r.content, args, settings)
 
-if __name__ == "__main__":
+def parse_args():
     parser = argparse.ArgumentParser(description="Display the current weather, or forecast")
     parser.add_argument('location', nargs='*', help='Optional location, by default uses geoip')
 
@@ -356,5 +351,15 @@ if __name__ == "__main__":
                         help='Set time format to use (default is \'civilian\')')
     parser.add_argument('-u', '--units', choices=Units.to_array(),
                         help='Set units to use (default is \'english\')')
-    main(parser.parse_args())
+    return parser.parse_args()
+
+def main():
+    args = parse_args()
+    settings = Settings(args)
+    api_url = make_api_url(args, settings)
+    r = requests.get(api_url)
+    print_weather_data(r.content, args, settings)
+
+if __name__ == "__main__":
+    main()
 

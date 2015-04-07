@@ -2,3 +2,8 @@
 .DS_Store
 cover
 .coverage
+
+# Python packaging
+build
+dist
+*.egg-info
