@@ -10,31 +10,31 @@ Commands can be run by themselves, or stacked.
 
 Sample Usage:
 
-	jackwink: weather (master) $ chmod +x ./weather.py
-	jackwink: weather (master) $ vim ~/.weatherrc
-	jackwink: weather (master) $ ./weather.py
-	Weather for Ann Arbor, MI
-	Currently: 61.3°F (16.3°C) Clear
-	Wind: Calm
-	Humidity: 59%
+    jackwink: weather (master) $ chmod +x ./weather.py
+    jackwink: weather (master) $ vim ~/.weatherrc
+    jackwink: weather (master) $ ./weather.py
+    Weather for Ann Arbor, MI
+    Currently: 61.3°F (16.3°C) Clear
+    Wind: Calm
+    Humidity: 59%
 
-	jackwink: weather (master) $ ./weather.py -anf
-	No alerts for Ann Arbor, MI
+    jackwink: weather (master) $ ./weather.py -anf
+    No alerts for Ann Arbor, MI
 
-	Weather for Ann Arbor, MI
-	Currently: 61.3°F (16.3°C) Clear
-	Wind: Calm
-	Humidity: 59%
+    Weather for Ann Arbor, MI
+    Currently: 61.3°F (16.3°C) Clear
+    Wind: Calm
+    Humidity: 59%
 
-	Weather Forecast:
-	Date                          Condition  Chance of Rain   Temp (Hi/Lo)        Wind  Humidity
-	---------------------------------------------------------------------------------------------------
-	May 9                     Partly Cloudy             20%  79 °F / 53 °F  ~0mph            82%
-	May 10                    Partly Cloudy              0%  70 °F / 47 °F  ~14mph W         57%
-	May 11         Chance of a Thunderstorm             40%  76 °F / 60 °F  ~11mph SSE       83%
-	May 12         Chance of a Thunderstorm             60%  81 °F / 64 °F  ~16mph SSW       85%
-	
-	jackwink: weather (master) $ 
+    Weather Forecast:
+    Date                          Condition  Chance of Rain   Temp (Hi/Lo)        Wind  Humidity
+    ---------------------------------------------------------------------------------------------------
+    May 9                     Partly Cloudy             20%  79 °F / 53 °F  ~0mph            82%
+    May 10                    Partly Cloudy              0%  70 °F / 47 °F  ~14mph W         57%
+    May 11         Chance of a Thunderstorm             40%  76 °F / 60 °F  ~11mph SSE       83%
+    May 12         Chance of a Thunderstorm             60%  81 °F / 64 °F  ~16mph SSW       85%
+
+    jackwink: weather (master) $ 
 
 ##Usage Options
 
@@ -42,9 +42,9 @@ Sample Usage:
 - `-o`, `--hourly`  Gives an overview of the hourly forcast for the next 36 hours 
 - `-f`, `--forecast`  Gives an overview of the daily forecast 
 - `-e`, `--extended`  Gives an overview of the extended forecast 
-- `-t`, `--time`  {civil, military}  Set time format
-- `-m`, `--metric` Uses metric units instead of English 
 - `-a`, `--alert` View any current weather alerts
+- `-t`, `--time`  {civilian, military} Set time format (defaults to civilian)
+- `-u`, `--units` {english, metric} Set the units to use (defaults to english)
 - `-h`, `--help`  Prints out a help message
 - `location`  The only argument without a flag, you can look up via zipcode or XX/CITY where XX is the state initial.  By default, it uses geoip to get your location
 
@@ -63,10 +63,11 @@ Run weather.py to generate a `.weatherrc` file, which by default installs into y
 
 Edit your `~/.weatherrc` file to include your API key.  If you like metric units by default, set `metric` to true. A sample `.weatherrc` file is provided below.
 
-	{
-		"api_key": "your-api-key",
-		"metric": false
-	}
+    {
+        "api_key": "your-api-key",
+        "units": "english",
+        "time": "military"
+    }
 	
 
 ##Installing

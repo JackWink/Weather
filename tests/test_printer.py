@@ -22,7 +22,7 @@ class TestPrinterFunctions(unittest.TestCase):
         self.assertEqual(printer.out, sys.stdout)
 
         default_settings = weather.Settings()
-        self.assertEqual(default_settings.metric, printer.settings.metric)
+        self.assertEqual(default_settings.units, printer.settings.units)
         self.assertEqual(default_settings.api_key, printer.settings.api_key)
 
     def test_print_no_alerts(self):
@@ -63,9 +63,9 @@ class TestPrinterFunctions(unittest.TestCase):
         self.assertEqual(self.spy.captured_out[7], '\n')
 
         self.spy.clear()
-        printer = weather.ResultPrinter(settings=weather.Settings(MockArgs(metric=True)), out=self.spy)
+        printer = weather.ResultPrinter(settings=weather.Settings(MockArgs(units="metric")), out=self.spy)
         printer.print_conditions(self._gen_conditions_dict(metric_larger=False))
-        self.assertTrue(printer.settings.metric)
+        self.assertEqual(printer.settings.units, "metric")
         self.assertEqual(len(self.spy.captured_out), 8)
         self.assertEqual(self.spy.captured_out[0], 'Weather for Ann Arbor')
         self.assertEqual(self.spy.captured_out[1], '\n')

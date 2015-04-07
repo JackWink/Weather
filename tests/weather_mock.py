@@ -12,11 +12,11 @@ class MockIO(object):
         self.captured_out = []
 
 class MockArgs(object):
-    def __init__(self, metric=False, api_key="1234"):
-        self.metric = metric
+    def __init__(self, units=False, api_key="1234"):
+        self.units = units
         self.api_key = api_key
 
     def __iter__(self):
         yield "api_key"
-        yield "metric"
+        yield "units"
 

@@ -34,7 +34,7 @@ class TestSettingsFunctions(unittest.TestCase):
 
     def _write_conf(self, api_key, metric_str):
         with open(self.conf_path, 'w') as f:
-            f.write('{ "api_key": "%s", "metric": %s }' % (api_key, metric_str))
+            f.write('{ "api_key": "%s", "units": "%s" }' % (api_key, metric_str))
 
 
     def test_default_file_creation(self):
@@ -49,34 +49,35 @@ class TestSettingsFunctions(unittest.TestCase):
         with open(self.conf_path) as f:
             data = json.load(f)
 
-        self.assertFalse(data["metric"])
+        self.assertEqual(data["units"], "english")
+        self.assertEqual(data["time"], "civilian")
         self.assertEqual(data["api_key"], "your-api-key")
 
     def test_file_loading(self):
         """
         Test that the loading Settings overrides the default conf file
         """
-        self._write_conf("12341234", "true")
+        self._write_conf("12341234", "metric")
         s = weather.Settings()
-        self.assertTrue(s.metric)
+        self.assertEqual(s.units, "metric")
         self.assertEqual(s.api_key, "12341234")
 
-        self._write_conf("1234", "false")
+        self._write_conf("1234", "english")
         #XXX reset conf file
         weather.Settings.settings = None
         s = weather.Settings()
-        self.assertFalse(s.metric)
+        self.assertEqual(s.units, "english")
         self.assertEqual(s.api_key, "1234")
 
     def test_argument_override(self):
         """
         Test to ensure that arguments can override metric, but not API key setting
         """
-        self._write_conf("12341234", "true")
+        self._write_conf("12341234", "metric")
         s = weather.Settings()
-        self.assertTrue(s.metric)
-        s = weather.Settings(MockArgs())
-        self.assertFalse(s.metric)
+        self.assertEqual(s.units, "metric")
+        s = weather.Settings(MockArgs(units="english"))
+        self.assertEqual(s.units, "english")
         self.assertEqual(s.api_key, "12341234")
 
 
