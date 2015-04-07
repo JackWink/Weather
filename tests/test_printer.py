@@ -1,4 +1,4 @@
-import weather
+import weatherpy as weather
 import unittest
 import sys
 
@@ -52,7 +52,6 @@ class TestPrinterFunctions(unittest.TestCase):
         printer = weather.ResultPrinter(self.spy)
         printer.print_conditions(self._gen_conditions_dict(metric_larger=False))
         self.assertEqual(len(self.spy.captured_out), 8)
-        print self.spy.captured_out
         self.assertEqual(self.spy.captured_out[0], 'Weather for Ann Arbor')
         self.assertEqual(self.spy.captured_out[1], '\n')
         self.assertEqual(self.spy.captured_out[2], u'Currently: 45 \xb0F (44 \xb0C) Light showers')

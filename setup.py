@@ -7,13 +7,13 @@ setup(
     author='Jack Wink',
     author_email='jackwink@umich.edu',
     license='MIT',
-    scripts=['src/weather.py'],
+    packages=['weatherpy'],
     install_requires=['requests>=2.0.0'],
     tests_require=['coverage', 'nose'],
     test_suite='tests',
     entry_points={
         'console_scripts': [
-            'weatherpy = weather:main',
+            'weatherpy = weatherpy:main',
         ]
     },
 )
