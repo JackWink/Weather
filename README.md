@@ -1,8 +1,8 @@
-#Weather 
+#Weatherpy
 
 [![Build Status](https://travis-ci.org/JackWink/Weather.svg?branch=master)](https://travis-ci.org/JackWink/Weather)
 
-Weather is a small command line python script to grab the current weather and/or weather forcast from weather underground and display it nicely in the terminal.
+weatherpy is a small command line python script to grab the current weather and/or weather forcast from weather underground and display it nicely in the terminal.
 
 ##Usage
 
@@ -10,15 +10,15 @@ Commands can be run by themselves, or stacked.
 
 Sample Usage:
 
-    jackwink: weather (master) $ chmod +x ./weather.py
+    jackwink: weather (master) $ sudo python setup.py install 
     jackwink: weather (master) $ vim ~/.weatherrc
-    jackwink: weather (master) $ ./weather.py
+    jackwink: weather (master) $ weatherpy
     Weather for Ann Arbor, MI
     Currently: 61.3°F (16.3°C) Clear
     Wind: Calm
     Humidity: 59%
 
-    jackwink: weather (master) $ ./weather.py -anf
+    jackwink: weather (master) $ weatherpy -anf
     No alerts for Ann Arbor, MI
 
     Weather for Ann Arbor, MI
@@ -46,22 +46,24 @@ Sample Usage:
 - `-t`, `--time`  {civilian, military} Set time format (defaults to civilian)
 - `-u`, `--units` {english, metric} Set the units to use (defaults to english)
 - `-h`, `--help`  Prints out a help message
-- `location`  The only argument without a flag, you can look up via zipcode or XX/CITY where XX is the state initial.  By default, it uses geoip to get your location
+- `location`  The only argument without a flag, you can look up via zipcode or XX/CITY where XX is the state initial
+
+By default, weatherpy uses geoip to get your location, so you don't need to provide one
 
 ##Dependencies
 
-- Requests
 - Weather Underground API key 
 
-If you don't have requests installed, install it! `pip install -r requirements.txt` or `pip install requests` 
-
-You'll need to sign up for an API key from weather underground `http://www.wunderground.com/weather/api/`.  You'll want the Cumulus feature plan and as long as you select the developer usage plan, it's free.  
+You'll need to sign up for an API key from weather underground `http://www.wunderground.com/weather/api/`.  
+You'll want the Cumulus feature plan and as long as you select the developer usage plan, it's free.  
 
 ##Configuring
 
-Run weather.py to generate a `.weatherrc` file, which by default installs into your home directory.  You may change it's install location by editing `WEATHER_CONF_FILE` in `weather.py`
+Run weatherpy to generate a `.weatherrc` file, which by default installs into your home directory. 
+You may change it's install location by editing `WEATHER_CONF_FILE` in `weatherpy/__init__.py`
 
-Edit your `~/.weatherrc` file to include your API key.  If you like metric units by default, set `metric` to true. A sample `.weatherrc` file is provided below.
+Edit your `~/.weatherrc` file to include your API key.  If you want metric units by default, 
+set `units` to 'metric'. A sample `.weatherrc` file is provided below.
 
     {
         "api_key": "your-api-key",
@@ -72,11 +74,13 @@ Edit your `~/.weatherrc` file to include your API key.  If you like metric units
 
 ##Installing
 
-Run `chmod +x weather.py` to ensure it's set to execute.  Move `weather.py` to into a directory in your `$PATH` variable (`/usr/bin` or `/usr/local/bin` typically). Optionally rename it to `weather`.   
+Run `sudo python setup.py install`   
 
 ##Testing
 
-Install the requirements.txt file, you'll need coverage and nose. If you're using windows or linux, edit the Makefile and uncomment the line relative to your OS.  
+If you're using windows or linux, edit the Makefile and uncomment the line relative to your OS. 
+You'll need nose and coverage installed.
 
-Run `make test` to run the unit tests, and `make` if you want to run the unit tests and generate a coverage report.
+Run `make test` to run the unit tests, and `make coverage` if you want to run the unit tests 
+and generate a coverage report.
 
