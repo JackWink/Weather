@@ -281,10 +281,7 @@ def print_weather_data(data, args, settings):
     if args.hourly:
         result_printer.print_hourly(data['hourly_forecast'])
         print ""
-    if args.forecast:
-        result_printer.print_forecast(data['forecast']['simpleforecast']['forecastday'])
-        print ""
-    if args.extended:
+    if args.forecast or args.extended:
         result_printer.print_forecast(data['forecast']['simpleforecast']['forecastday'])
         print ""
 
