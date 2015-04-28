@@ -1,9 +1,15 @@
+"""
+Weatherpy Setup
+"""
 from setuptools import setup
+
+import weatherpy
 
 setup(
     name='weatherpy',
-    version='0.1',
-    description='Command line utility to display formatted weather info from Weather Underground',
+    version=weatherpy.__version__,
+    description=('Command line utility to display formatted weather info from'
+                 'Weather Underground'),
     author='Jack Wink',
     author_email='jackwink@umich.edu',
     license='MIT',

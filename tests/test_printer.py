@@ -1,4 +1,4 @@
-import weatherpy as weather
+import weatherpy.weather as weather
 import unittest
 import sys
 

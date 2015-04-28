@@ -1,5 +1,5 @@
 import unittest
-import weatherpy as weather
+import weatherpy.weather as weather
 import os
 import shutil
 import json
