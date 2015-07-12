@@ -1,11 +1,16 @@
 import weatherpy.weather as weather
 import unittest
 import sys
+import os
 
 from weather_mock import MockArgs, MockIO
 
 class TestPrinterFunctions(unittest.TestCase):
     def setUp(self):
+        self.conf_path = os.path.expanduser(weather.WEATHER_CONF_FILE)
+
+        if os.path.exists(self.conf_path):
+            os.remove(self.conf_path)
         self.spy = MockIO()
 
     def tearDown(self):
