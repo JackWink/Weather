@@ -8,7 +8,7 @@ import json
 import codecs
 import os
 from .types import *
-from .settings import Settings
+from .settings import Settings, WEATHER_CONF_FILE
 
 
 class ResultPrinter(object):

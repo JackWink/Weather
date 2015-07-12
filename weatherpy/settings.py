@@ -1,5 +1,6 @@
 import os
 import json
+from copy import deepcopy
 from .types import Units, TimeFormats, DateFormats
 
 WEATHER_CONF_FILE = "~/.weatherrc"
@@ -12,7 +13,7 @@ class Settings(object):
     _DUMMY_API_KEY = 'your-api-key'
 
     # Cache of the class level settings
-    settings = {
+    _settings = {
         'api_key': _DUMMY_API_KEY,
         'units': Units.ENGLISH,
         'time': TimeFormats.CIVILIAN,
@@ -21,8 +22,7 @@ class Settings(object):
 
     def __init__(self, args=None):
         self.file_path = os.path.expanduser(WEATHER_CONF_FILE)
-        if not args:
-            args = {}
+        self.settings = deepcopy(self._settings)
 
         # Load (and create if needed) the weatherrc file
         if not os.path.exists(self.file_path):
@@ -33,9 +33,10 @@ class Settings(object):
                 for key in saved_settings:
                     self._override(key, saved_settings)
 
-        self._override("units", args)
-        self._override("time", args)
-        self._override("date", args)
+        if args is not None:
+            self._override("units", args)
+            self._override("time", args)
+            self._override("date", args)
 
     def _override(self, key, args):
         """
@@ -65,4 +66,4 @@ class Settings(object):
         """
         Proxy attribute requests to the settings cache
         """
-        return Settings.settings[attr]
+        return self.settings[attr]
