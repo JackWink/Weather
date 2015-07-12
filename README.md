@@ -44,6 +44,7 @@ Sample Usage:
 - `-e`, `--extended`  Gives an overview of the extended forecast 
 - `-a`, `--alert` View any current weather alerts
 - `-t`, `--time`  {civilian, military} Set time format (defaults to civilian)
+- `-d`, `--date`  {date, weekday} Set date format (defaults to date)
 - `-u`, `--units` {english, metric} Set the units to use (defaults to english)
 - `-h`, `--help`  Prints out a help message
 - `location`  The only argument without a flag, you can look up via zipcode or XX/CITY where XX is the state initial

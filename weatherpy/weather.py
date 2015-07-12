@@ -29,6 +29,13 @@ class TimeFormats(object):
     def to_array():
         return [TimeFormats.MILITARY, TimeFormats.CIVILIAN]
 
+class DateFormats(object):
+    DATE  = "date"
+    DAY   = "weekday"
+
+    @staticmethod
+    def to_array():
+        return [DateFormats.DATE, DateFormats.DAY]
 
 class Direction(object):
     @staticmethod
@@ -71,11 +78,17 @@ class Settings(object):
         if "time" in args and args.time:
             Settings.settings["time"] = args.time
 
+        if "date" in args and args.date:
+            Settings.settings["date"] = args.date
+
         if "units" not in Settings.settings or Settings.settings["units"] is None:
             Settings.settings["units"] = Units.ENGLISH
 
         if "time" not in Settings.settings or Settings.settings["time"] is None:
             Settings.settings["time"] = TimeFormats.CIVILIAN
+
+        if "date" not in Settings.settings or Settings.settings["date"] is None:
+            Settings.settings["date"] = DateFormats.DAY
 
     @staticmethod
     def generate_default_weatherrc():
@@ -172,7 +185,7 @@ class ResultPrinter(object):
 
         for item in data:
             date = item['date']
-            date_str = format_date(date['monthname'], date['day'])
+            date_str = format_date(date, self.settings.date)
             temp = u"{0} / {1}".format(format_degree(item['high'], unit),
                                        format_degree(item['low'], unit))
             wind = format_windspeed(item['avewind'], unit)
@@ -266,11 +279,15 @@ def format_hour(time_dict, time_format):
         return time_dict['civil']
 
 
-def format_date(month, day):
+def format_date(date, date_format):
     """
     Returns a date string, 'April 2' for example
     """
-    return FORMAT_STRINGS['date'].format(str(month), str(day))
+    if date_format == DateFormats.DATE:
+        return FORMAT_STRINGS['date'].format(str(date['monthname']), str(date['day']))
+
+    else:
+        return date['weekday_short']
 
 
 def print_weather_data(data, args, settings):
@@ -369,6 +386,8 @@ def parse_args():
                         action='store_true')
     parser.add_argument('-t', '--time', choices=TimeFormats.to_array(),
                         help='Set time format to use (default is \'civilian\')')
+    parser.add_argument('-d', '--date', choices=DateFormats.to_array(),
+                        help='Set date format to use (default is \'date\')')
     parser.add_argument('-u', '--units', choices=Units.to_array(),
                         help='Set units to use (default is \'english\')')
     return parser.parse_args()
