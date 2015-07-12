@@ -279,7 +279,6 @@ def format_hour(time_dict, time_format):
         return time_dict['civil']
 
 
-#def format_date(month, day):
 def format_date(date, date_format):
     """
     Returns a date string, 'April 2' for example
