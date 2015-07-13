@@ -69,7 +69,8 @@ set `units` to 'metric'. A sample `.weatherrc` file is provided below.
     {
         "api_key": "your-api-key",
         "units": "english",
-        "time": "military"
+        "time": "military",
+        "date": "weekday"
     }
 	
 
