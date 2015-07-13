@@ -14,3 +14,5 @@ clean:
 	rm -rf *.pyc
 	rm -rf tests/*.pyc
 	rm -rf cover
+install:
+	sudo python setup.py install

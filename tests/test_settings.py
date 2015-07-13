@@ -11,11 +11,6 @@ class TestSettingsFunctions(unittest.TestCase):
         if os.path.exists(self.conf_path):
             self._backup_settings(self.conf_path)
 
-        #XXX - Need to reset internal settings so it'll reparse the conf file
-        if weather.Settings.settings:
-            weather.Settings.settings = None
-
-
     def tearDown(self):
         backupPath= os.path.expanduser("~/.weatherrc_backup")
         if os.path.exists(backupPath):
@@ -64,7 +59,6 @@ class TestSettingsFunctions(unittest.TestCase):
 
         self._write_conf("1234", "english")
         #XXX reset conf file
-        weather.Settings.settings = None
         s = weather.Settings()
         self.assertEqual(s.units, "english")
         self.assertEqual(s.api_key, "1234")

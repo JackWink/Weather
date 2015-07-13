@@ -7,104 +7,8 @@ import sys
 import json
 import codecs
 import os
-
-
-WEATHER_CONF_FILE = "~/.weatherrc"
-
-
-class Units(object):
-    METRIC = "metric"
-    ENGLISH = "english"
-
-    @staticmethod
-    def to_array():
-        return [Units.METRIC, Units.ENGLISH]
-
-
-class TimeFormats(object):
-    MILITARY = "military"
-    CIVILIAN = "civilian"
-
-    @staticmethod
-    def to_array():
-        return [TimeFormats.MILITARY, TimeFormats.CIVILIAN]
-
-class DateFormats(object):
-    DATE  = "date"
-    DAY   = "weekday"
-
-    @staticmethod
-    def to_array():
-        return [DateFormats.DATE, DateFormats.DAY]
-
-class Direction(object):
-    @staticmethod
-    def shorthand(direction):
-        normalized = direction.lower()
-        if normalized == "east":
-            return "E"
-        if normalized == "west":
-            return "W"
-        if normalized == "south":
-            return "S"
-        if normalized == "north":
-            return "N"
-        return direction
-
-
-class Settings(object):
-    """
-    Contains the settings held in the WEATHER_CONF_FILE.
-    """
-    # Cache of the class level settings
-    settings = None
-    file_path = None
-
-    def __init__(self, args=None):
-        if not args:
-            args = {}
-
-        if not Settings.settings:
-            Settings.file_path = os.path.expanduser(WEATHER_CONF_FILE)
-            if not os.path.exists(Settings.file_path):
-                Settings.generate_default_weatherrc()
-
-            with open(Settings.file_path) as weatherrc:
-                Settings.settings = json.load(weatherrc)
-
-        if "units" in args and args.units:
-            Settings.settings["units"] = args.units
-
-        if "time" in args and args.time:
-            Settings.settings["time"] = args.time
-
-        if "date" in args and args.date:
-            Settings.settings["date"] = args.date
-
-        if "units" not in Settings.settings or Settings.settings["units"] is None:
-            Settings.settings["units"] = Units.ENGLISH
-
-        if "time" not in Settings.settings or Settings.settings["time"] is None:
-            Settings.settings["time"] = TimeFormats.CIVILIAN
-
-        if "date" not in Settings.settings or Settings.settings["date"] is None:
-            Settings.settings["date"] = DateFormats.DAY
-
-    @staticmethod
-    def generate_default_weatherrc():
-        """
-        Writes a default weather conf file
-        """
-        with open(Settings.file_path, "w") as weatherrc:
-            weatherrc.write("\n".join(["{", '"api_key": "your-api-key",',
-                                            '"units": "english",',
-                                            '"time": "civilian"', "}"]))
-
-    def __getattr__(self, attr):
-        """
-        Proxy attribute requests to the settings cache
-        """
-        return Settings.settings[attr]
+from .types import *
+from .settings import Settings, WEATHER_CONF_FILE
 
 
 class ResultPrinter(object):
@@ -167,7 +71,7 @@ class ResultPrinter(object):
 
         for item in data:
             time = format_hour(item["FCTTIME"], self.settings.time)
-            date = format_date(item["FCTTIME"]["mon_abbrev"], item["FCTTIME"]["mday"])
+            date = format_date(item["FCTTIME"], self.settings.date)
             temp = format_degree(item["temp"], self.settings.units)
             val.append([date, time, temp, item["pop"] + "%", item['condition']])
 
@@ -283,9 +187,11 @@ def format_date(date, date_format):
     """
     Returns a date string, 'April 2' for example
     """
-    if date_format == DateFormats.DATE:
-        return FORMAT_STRINGS['date'].format(str(date['monthname']), str(date['day']))
-
+    if date_format == DateFormats.DATE or 'weekday_short' not in date:
+        if 'monthname' in date:
+            return FORMAT_STRINGS['date'].format(str(date['monthname']), str(date['day']))
+        else:
+            return FORMAT_STRINGS['date'].format(str(date['mon_abbrev']), str(date['mday']))
     else:
         return date['weekday_short']
 
@@ -357,7 +263,6 @@ def make_api_url(args, settings):
     Returns a url to the weather underground API endpoint by parsing
     program arguments.
     """
-    settings = Settings()
     base_url="http://api.wunderground.com/api/%s/" % settings.api_key
 
     # Create a location string, or use autoip
