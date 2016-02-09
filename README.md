@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/JackWink/Weather.svg?branch=master)](https://travis-ci.org/JackWink/Weather)
 
-weatherpy is a small command line python script to grab the current weather and/or weather forcast from weather underground and display it nicely in the terminal.
+Weatherpy is a small command line python script to grab the current weather and/or weather forcast from weather underground and display it nicely in the terminal.
 
 ##Usage
 
@@ -61,7 +61,7 @@ You'll want the Cumulus feature plan and as long as you select the developer usa
 ##Configuring
 
 Run weatherpy to generate a `.weatherrc` file, which by default installs into your home directory. 
-You may change it's install location by editing `WEATHER_CONF_FILE` in `weatherpy/__init__.py`
+You may change the install location by editing `WEATHER_CONF_FILE` in `weatherpy/__init__.py`
 
 Edit your `~/.weatherrc` file to include your API key.  If you want metric units by default, 
 set `units` to 'metric'. A sample `.weatherrc` file is provided below.
