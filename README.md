@@ -1,10 +1,10 @@
-#Weatherpy
+# Weatherpy
 
 [![Build Status](https://travis-ci.org/JackWink/Weather.svg?branch=master)](https://travis-ci.org/JackWink/Weather)
 
 Weatherpy is a small command line python script to grab the current weather and/or weather forcast from weather underground and display it nicely in the terminal.
 
-##Usage
+## Usage
 
 Commands can be run by themselves, or stacked.
 
@@ -36,7 +36,7 @@ Sample Usage:
 
     jackwink: weather (master) $ 
 
-##Usage Options
+## Usage Options
 
 - `-n`, `--now`  Gives the current weather conditions 
 - `-o`, `--hourly`  Gives an overview of the hourly forcast for the next 36 hours 
@@ -51,14 +51,14 @@ Sample Usage:
 
 By default, weatherpy uses geoip to get your location, so you don't need to provide one
 
-##Dependencies
+## Dependencies
 
 - Weather Underground API key 
 
 You'll need to sign up for an API key from weather underground `http://www.wunderground.com/weather/api/`.  
 You'll want the Cumulus feature plan and as long as you select the developer usage plan, it's free.  
 
-##Configuring
+## Configuring
 
 Run weatherpy to generate a `.weatherrc` file, which by default installs into your home directory. 
 You may change the install location by editing `WEATHER_CONF_FILE` in `weatherpy/__init__.py`
@@ -74,11 +74,11 @@ set `units` to 'metric'. A sample `.weatherrc` file is provided below.
     }
 	
 
-##Installing
+## Installing
 
 Run `sudo python setup.py install`   
 
-##Testing
+## Testing
 
 If you're using windows or linux, edit the Makefile and uncomment the line relative to your OS. 
 You'll need nose and coverage installed.
